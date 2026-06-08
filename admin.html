@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Skynet Global Logistics</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./public/favicon-32x32.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: hsl(220, 90%, 56%);
+      --primary-dark: hsl(220, 90%, 44%);
+      --primary-light: hsl(220, 90%, 95%);
+      --secondary: hsl(220, 30%, 18%);
+      --bg: hsl(220, 20%, 97%);
+      --surface: #ffffff;
+      --surface-hover: hsl(220, 20%, 95%);
+      --border: hsl(220, 15%, 90%);
+      --text: hsl(220, 15%, 25%);
+      --text-muted: hsl(220, 10%, 55%);
+      --success: hsl(152, 69%, 40%);
+      --success-bg: hsl(152, 69%, 95%);
+      --warning: hsl(38, 92%, 50%);
+      --warning-bg: hsl(38, 92%, 95%);
+      --danger: hsl(0, 72%, 51%);
+      --danger-bg: hsl(0, 72%, 95%);
+      --info: hsl(220, 90%, 56%);
+      --info-bg: hsl(220, 90%, 95%);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
+      --transition: 0.2s ease;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== Top Bar ===== */
+    .topbar {
+      background: linear-gradient(135deg, var(--secondary) 0%, hsl(220, 40%, 25%) 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+    .topbar-brand img { height: 32px; }
+    .topbar-brand h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .topbar-brand span {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      font-weight: 400;
+      margin-left: 8px;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 20px;
+    }
+    .topbar-link {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .topbar-link:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    /* ===== Stats Row ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 28px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .stat-card .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .stat-card .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--secondary);
+    }
+    .stat-card .stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+    }
+    .stat-card:nth-child(1) .stat-icon { background: var(--info-bg); color: var(--info); }
+    .stat-card:nth-child(2) .stat-icon { background: var(--success-bg); color: var(--success); }
+    .stat-card:nth-child(3) .stat-icon { background: var(--warning-bg); color: var(--warning); }
+    .stat-card:nth-child(4) .stat-icon { background: var(--danger-bg); color: var(--danger); }
+
+    /* ===== Tabs ===== */
+    .content-area {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px 40px;
+    }
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 5px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+    .tab {
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+      border: none;
+      background: none;
+      user-select: none;
+    }
+    .tab:hover { color: var(--text); background: var(--surface-hover); }
+    .tab.active { background: var(--primary); color: white; box-shadow: var(--shadow); }
+
+    /* ===== Tab Panels ===== */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== Data Table ===== */
+    .table-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
+    .table-header .count-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: hsl(220, 20%, 98%);
+      border-bottom: 2px solid var(--border);
+    }
+    tbody td {
+      padding: 14px 20px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid hsl(220, 15%, 95%);
+      vertical-align: middle;
+    }
+    tbody tr { transition: var(--transition); }
+    tbody tr:hover { background: hsl(220, 20%, 98%); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* ===== Badges ===== */
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    .badge-new { background: var(--info-bg); color: var(--info); }
+    .badge-read { background: var(--warning-bg); color: var(--warning); }
+    .badge-responded { background: var(--success-bg); color: var(--success); }
+    .badge-pending { background: var(--warning-bg); color: var(--warning); }
+    .badge-sent { background: var(--info-bg); color: var(--info); }
+    .badge-converted { background: var(--success-bg); color: var(--success); }
+    .badge-delivered { background: var(--success-bg); color: var(--success); }
+    .badge-transit, .badge-in-transit { background: var(--info-bg); color: var(--info); }
+    .badge-customs { background: var(--warning-bg); color: var(--warning); }
+    .badge-info-received { background: hsl(260, 60%, 95%); color: hsl(260, 60%, 50%); }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+    .btn-danger:hover { background: var(--danger); color: white; }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
+
+    /* ===== Select (inline status) ===== */
+    .status-select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .status-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.open { display: flex; opacity: 1; }
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 560px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-head h3 { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--secondary); }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface-hover);
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .modal-close:hover { background: var(--danger-bg); color: var(--danger); }
+    .modal-body { padding: 24px; }
+
+    /* ===== Form Controls (inside modal) ===== */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: var(--transition);
+      background: var(--bg);
+      color: var(--text);
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ===== Toast ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(120%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 400px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast-success { background: var(--success); color: white; }
+    .toast-error { background: var(--danger); color: white; }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state svg { margin-bottom: 16px; opacity: 0.4; }
+    .empty-state p { font-size: 0.95rem; }
+
+    /* ===== Truncate ===== */
+    .truncate {
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .topbar { padding: 14px 16px; }
+      .stats-row { padding: 20px 16px; grid-template-columns: 1fr 1fr; }
+      .content-area { padding: 0 16px 30px; }
+      .table-card { overflow-x: auto; }
+      .form-row { grid-template-columns: 1fr; }
+      .tabs { width: 100%; }
+      .tab { flex: 1; text-align: center; padding: 10px 12px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <a href="/admin" class="topbar-brand">
+      <img src="./public/logo.png" alt="Skynet Logo">
+      <h1>Skynet Admin <span>Dashboard</span></h1>
+    </a>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <span id="adminGreeting" style="font-size: 0.9rem; font-weight: 500; opacity: 0.9; color: var(--primary-light);"></span>
+      <button id="btnLogout" class="btn btn-danger btn-sm" style="border-color: rgba(239, 68, 68, 0.4); color: white; background: rgba(239, 68, 68, 0.2);">Logout</button>
+      <a href="/" class="topbar-link">← Back to Website</a>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </div>
+      <div class="stat-label">Contact Messages</div>
+      <div class="stat-value" id="statContacts">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+      </div>
+      <div class="stat-label">Active Shipments</div>
+      <div class="stat-value" id="statShipments">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="stat-label">Quotes Generated</div>
+      <div class="stat-value" id="statQuotes">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="stat-label">New Messages</div>
+      <div class="stat-value" id="statNewMsgs">—</div>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="contacts">Contacts</button>
+      <button class="tab" data-tab="shipments">Shipments</button>
+      <button class="tab" data-tab="quotes">Quotes</button>
+    </div>
+
+    <!-- Contacts Panel -->
+    <div class="tab-panel active" id="panel-contacts">
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Contact Messages</h2>
+          <span class="count-badge" id="contactCount">0 messages</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Company</th>
+              <th>Email</th>
+              <th>Message</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contactsBody">
+            <tr><td colspan="7"><div class="empty-state"><p>Loading contacts...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Shipments Panel -->
+    <div class="tab-panel" id="panel-shipments">
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Shipments</h2>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="count-badge" id="shipmentCount">0 shipments</span>
+            <button class="btn btn-primary btn-sm" id="btnNewShipment">+ New Shipment</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Tracking Code</th>
+              <th>Origin</th>
+              <th>Destination</th>
+              <th>Status</th>
+              <th>Events</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="shipmentsBody">
+            <tr><td colspan="7"><div class="empty-state"><p>Loading shipments...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quotes Panel -->
+    <div class="tab-panel" id="panel-quotes">
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Quote Estimates</h2>
+          <span class="count-badge" id="quoteCount">0 quotes</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Freight</th>
+              <th>Weight</th>
+              <th>Volume</th>
+              <th>Cost</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="quotesBody">
+            <tr><td colspan="9"><div class="empty-state"><p>Loading quotes...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Shipment Modal -->
+  <div class="modal-overlay" id="shipmentModalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Create New Shipment</h3>
+        <button class="modal-close" id="shipmentModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="newShipmentForm">
+          <div class="form-group">
+            <label>Tracking Code (auto-generated if empty)</label>
+            <input type="text" class="form-control" id="newTrackingCode" placeholder="SKY-XXXXXX">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Origin</label>
+              <input type="text" class="form-control" id="newOrigin" placeholder="e.g. Shanghai, China" required>
+            </div>
+            <div class="form-group">
+              <label>Destination</label>
+              <input type="text" class="form-control" id="newDest" placeholder="e.g. Sydney, Australia" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select class="form-control" id="newStatus">
+              <option value="Information Received">Information Received</option>
+              <option value="In Transit">In Transit</option>
+              <option value="Customs">Customs</option>
+              <option value="Out for Delivery">Out for Delivery</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Initial Event Description</label>
+            <input type="text" class="form-control" id="newEventDesc" placeholder="e.g. Booking confirmed at origin warehouse" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px; justify-content:center;">Create Shipment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="adminToastContainer"></div>
+
+  <script>
+    // ==========================================
+    // Authentication Check
+    // ==========================================
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      window.location.href = '/admin/login';
+    }
+
+    // ==========================================
+    // Admin Dashboard Logic
+    // ==========================================
+    const API = '/api';
+
+    // ===== Toast =====
+    const showToast = (message, type = 'success') => {
+      const container = document.getElementById('adminToastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    };
+
+    // ===== Tabs =====
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // ===== Date Formatter =====
+    const fmtDate = (d) => new Date(d).toLocaleDateString('en-AU', {
+      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    // ===== Generic Fetch =====
+    const apiFetch = async (url, opts = {}) => {
+      try {
+        const headers = { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        };
+        const res = await fetch(url, {
+          ...opts,
+          headers: {
+            ...headers,
+            ...opts.headers
+          }
+        });
+        
+        if (res.status === 401) {
+          showToast('Session expired. Redirecting to login...', 'error');
+          localStorage.removeItem('adminToken');
+          setTimeout(() => {
+            window.location.href = '/admin/login';
+          }, 1500);
+          return { success: false };
+        }
+        
+        return await res.json();
+      } catch (err) {
+        console.error('API Error:', err);
+        showToast('Network error. Check your connection.', 'error');
+        return { success: false };
+      }
+    };
+
+    // ==========================================
+    // CONTACTS
+    // ==========================================
+    const loadContacts = async () => {
+      const res = await apiFetch(`${API}/contacts`);
+      const tbody = document.getElementById('contactsBody');
+
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No contact messages yet.</p></div></td></tr>';
+        document.getElementById('contactCount').textContent = '0 messages';
+        document.getElementById('statContacts').textContent = '0';
+        document.getElementById('statNewMsgs').textContent = '0';
+        return;
+      }
+
+      document.getElementById('contactCount').textContent = `${res.count} messages`;
+      document.getElementById('statContacts').textContent = res.count;
+      document.getElementById('statNewMsgs').textContent = res.data.filter(c => c.status === 'new').length;
+
+      tbody.innerHTML = res.data.map(c => `
+        <tr>
+          <td><strong>${c.fullName}</strong></td>
+          <td>${c.company}</td>
+          <td><a href="mailto:${c.email}" style="color:var(--primary)">${c.email}</a></td>
+          <td><span class="truncate" title="${c.message}">${c.message}</span></td>
+          <td>
+            <select class="status-select" onchange="updateContactStatus('${c._id}', this.value)">
+              <option value="new" ${c.status==='new'?'selected':''}>New</option>
+              <option value="read" ${c.status==='read'?'selected':''}>Read</option>
+              <option value="responded" ${c.status==='responded'?'selected':''}>Responded</option>
+            </select>
+          </td>
+          <td style="white-space:nowrap; font-size:0.82rem; color:var(--text-muted)">${fmtDate(c.createdAt)}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteContact('${c._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    };
+
+    const updateContactStatus = async (id, status) => {
+      const res = await apiFetch(`${API}/contacts/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      if (res.success) {
+        showToast('Contact status updated.');
+        loadContacts();
+      }
+    };
+
+    const deleteContact = async (id) => {
+      if (!confirm('Delete this contact message?')) return;
+      const res = await apiFetch(`${API}/contacts/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast('Contact deleted.');
+        loadContacts();
+      }
+    };
+
+    // ==========================================
+    // SHIPMENTS
+    // ==========================================
+    const loadShipments = async () => {
+      const res = await apiFetch(`${API}/shipments`);
+      const tbody = document.getElementById('shipmentsBody');
+
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No shipments yet.</p></div></td></tr>';
+        document.getElementById('shipmentCount').textContent = '0 shipments';
+        document.getElementById('statShipments').textContent = '0';
+        return;
+      }
+
+      document.getElementById('shipmentCount').textContent = `${res.count} shipments`;
+      document.getElementById('statShipments').textContent = res.count;
+
+      const badgeClass = (status) => {
+        const map = {
+          'Delivered': 'badge-delivered',
+          'In Transit': 'badge-transit',
+          'Customs': 'badge-customs',
+          'Out for Delivery': 'badge-transit',
+          'Information Received': 'badge-info-received'
+        };
+        return map[status] || 'badge-pending';
+      };
+
+      tbody.innerHTML = res.data.map(s => `
+        <tr>
+          <td><strong style="color:var(--primary); font-family:'Outfit',sans-serif; letter-spacing:0.5px;">${s.trackingCode}</strong></td>
+          <td>${s.origin || '—'}</td>
+          <td>${s.destination || '—'}</td>
+          <td><span class="badge ${badgeClass(s.status)}">${s.status}</span></td>
+          <td style="color:var(--text-muted)">${s.events ? s.events.length : 0} events</td>
+          <td style="white-space:nowrap; font-size:0.82rem; color:var(--text-muted)">${fmtDate(s.createdAt)}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteShipment('${s._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    };
+
+    const deleteShipment = async (id) => {
+      if (!confirm('Delete this shipment?')) return;
+      const res = await apiFetch(`${API}/shipments/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast('Shipment deleted.');
+        loadShipments();
+      }
+    };
+
+    // ===== New Shipment Modal =====
+    const shipmentOverlay = document.getElementById('shipmentModalOverlay');
+    document.getElementById('btnNewShipment').addEventListener('click', () => {
+      shipmentOverlay.classList.add('open');
+    });
+    document.getElementById('shipmentModalClose').addEventListener('click', () => {
+      shipmentOverlay.classList.remove('open');
+    });
+    shipmentOverlay.addEventListener('click', (e) => {
+      if (e.target === shipmentOverlay) shipmentOverlay.classList.remove('open');
+    });
+
+    document.getElementById('newShipmentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = document.getElementById('newTrackingCode').value.trim();
+      const origin = document.getElementById('newOrigin').value.trim();
+      const dest = document.getElementById('newDest').value.trim();
+      const status = document.getElementById('newStatus').value;
+      const eventDesc = document.getElementById('newEventDesc').value.trim();
+
+      if (!origin || !dest || !eventDesc) {
+        showToast('Please fill all required fields.', 'error');
+        return;
+      }
+
+      const body = {
+        origin,
+        destination: dest,
+        status,
+        events: [{
+          title: status,
+          description: eventDesc,
+          timestamp: new Date().toISOString(),
+          isActive: true
+        }]
+      };
+      if (code) body.trackingCode = code;
+
+      const res = await apiFetch(`${API}/shipments`, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+
+      if (res.success) {
+        showToast(`Shipment ${res.data.trackingCode} created!`);
+        shipmentOverlay.classList.remove('open');
+        document.getElementById('newShipmentForm').reset();
+        loadShipments();
+      } else {
+        showToast(res.message || 'Failed to create shipment.', 'error');
+      }
+    });
+
+    // ==========================================
+    // QUOTES
+    // ==========================================
+    const loadQuotes = async () => {
+      const res = await apiFetch(`${API}/quotes`);
+      const tbody = document.getElementById('quotesBody');
+
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><p>No quotes yet.</p></div></td></tr>';
+        document.getElementById('quoteCount').textContent = '0 quotes';
+        document.getElementById('statQuotes').textContent = '0';
+        return;
+      }
+
+      document.getElementById('quoteCount').textContent = `${res.count} quotes`;
+      document.getElementById('statQuotes').textContent = res.count;
+
+      const freightLabels = {
+        'air': 'Air Freight',
+        'ocean-fcl': 'Ocean FCL',
+        'ocean-lcl': 'Ocean LCL',
+        'land': 'Land'
+      };
+
+      tbody.innerHTML = res.data.map(q => `
+        <tr>
+          <td><strong>${q.origin}</strong> → ${q.destination}</td>
+          <td>${freightLabels[q.freightType] || q.freightType}</td>
+          <td>${q.weight.toLocaleString()} kg</td>
+          <td>${q.volume} cbm</td>
+          <td style="font-weight:700; color:var(--success); font-family:'Outfit',sans-serif;">$${q.estimatedCost.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+          <td>${q.contactEmail ? `<a href="mailto:${q.contactEmail}" style="color:var(--primary)">${q.contactEmail}</a>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+          <td>
+            <select class="status-select" onchange="updateQuoteStatus('${q._id}', this.value)">
+              <option value="pending" ${q.status==='pending'?'selected':''}>Pending</option>
+              <option value="sent" ${q.status==='sent'?'selected':''}>Sent</option>
+              <option value="converted" ${q.status==='converted'?'selected':''}>Converted</option>
+            </select>
+          </td>
+          <td style="white-space:nowrap; font-size:0.82rem; color:var(--text-muted)">${fmtDate(q.createdAt)}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteQuote('${q._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    };
+
+    const updateQuoteStatus = async (id, status) => {
+      const res = await apiFetch(`${API}/quotes/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      if (res.success) {
+        showToast('Quote status updated.');
+        loadQuotes();
+      }
+    };
+
+    const deleteQuote = async (id) => {
+      if (!confirm('Delete this quote?')) return;
+      const res = await apiFetch(`${API}/quotes/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast('Quote deleted.');
+        loadQuotes();
+      }
+    };
+
+    // ==========================================
+    // Initial Load & Auth Verification
+    // ==========================================
+    const verifyToken = async () => {
+      try {
+        const res = await fetch(`${API}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          localStorage.removeItem('adminToken');
+          window.location.href = '/admin/login';
+          return;
+        }
+        
+        // Show greeting
+        const adminName = data.data.displayName || data.data.username || 'Admin';
+        document.getElementById('adminGreeting').textContent = `Logged in as: ${adminName}`;
+        
+        // Load dashboard data
+        loadContacts();
+        loadShipments();
+        loadQuotes();
+      } catch (err) {
+        console.error('Auth verification error:', err);
+      }
+    };
+
+    // Logout Action
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin/login';
+    });
+
+    // Start verification
+    verifyToken();
+  </script>
+</body>
+</html>
