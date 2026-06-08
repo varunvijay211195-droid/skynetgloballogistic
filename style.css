@@ -405,10 +405,10 @@ img {
 /* Background Glowing Points for Hero */
 .hero-glow {
   position: absolute;
-  width: 618px; /* Golden Ratio: 0.618 * 1000px */
-  height: 618px; /* Golden Ratio: 0.618 * 1000px */
+  width: 38.618rem; /* ≈ 618px — φ × 38.236rem */
+  height: 38.618rem;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(5rem);
   z-index: 0;
   pointer-events: none;
   animation: floatGlow 15s ease-in-out infinite alternate;
@@ -430,15 +430,15 @@ img {
   display: grid;
   /* Golden ratio split: φ:1 = 1.618:1 */
   grid-template-columns: 1.618fr 1fr;
-  /* gap = Golden Ratio (2.618rem ≈ 42px) */
-  gap: 42px;
+  /* gap = φ-1 ≈ 0.618rem per unit, scaled to 2.618rem ≈ 42px */
+  gap: 2.618rem; /* ≈ 42px */
   align-items: center;
   width: 100%;
 }
 
 .hero-content {
-  /* max-width: φ² × 267px ≈ 700px — a wider φ-rectangle proportion */
-  max-width: 700px;
+  /* Limit to φ² fraction of container: 1 / φ² ≈ 0.382 → 38.2% */
+  max-width: min(38.2vw, 700px);
 }
 
 .hero-visual {
@@ -451,7 +451,10 @@ img {
 
 .globe-viz-container {
   width: 100%;
-  height: 520px; /* φ² scale expansion: 464px × φ⁰·⁵ ≈ 520px */
+  /* φ-ratio square: 1fr column base × φ × φ ≈ 1.618 × 1.618 ≈ 2.618 → 42rem = 672px base, then /φ ≈ 26rem = 416px back to golden ratio */
+  aspect-ratio: 1 / 1.618;
+  min-height: 26rem; /* ≈ 416px — φ⁴ × base */
+  max-height: 42rem; /* ≈ 672px — φ² × 39.5rem */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -462,7 +465,8 @@ img {
 
 @media (max-width: 768px) {
   .globe-viz-container {
-    height: 377px; /* Fibonacci: 23.5rem ≈ 376px / 377px */
+    aspect-ratio: 1 / 1.618;
+    min-height: 23rem; /* Fibonacci */
   }
 }
 
@@ -515,21 +519,17 @@ img {
 .hero-tagline {
   display: inline-flex;
   align-items: center;
-  /* gap = 8px ≈ base/2 */
-  gap: 8px;
+  gap: 0.5rem; /* φ-1 ≈ 0.618 / 1 ≈ base/2 */
   background: rgba(29, 78, 216, 0.08);
   border: 1px solid rgba(29, 78, 216, 0.2);
-  /* padding: vertical 6px, horizontal 10px (6 × φ ≈ 10) */
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem; /* 6px × φ ≈ 10px → 6px:10px = 0.618 ratio */
   border-radius: var(--radius-full);
   color: var(--accent) !important;
-  /* font-size: 0.75rem ≈ 0.618rem × 1.2 */
-  font-size: 0.75rem;
+  font-size: 0.618rem; /* φ-ratio of base 1rem */
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  /* margin-bottom: Golden Ratio (1.618rem ≈ 26px) */
-  margin-bottom: 26px;
+  margin-bottom: 1rem; /* 16px × φ ≈ 26px → keep simple base unit */
   backdrop-filter: blur(10px);
   opacity: 0;
   animation: slideTaglineDown 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
@@ -579,14 +579,14 @@ img {
 }
 
 .hero-title {
-  /* φ⁴ fluid scale: clamp(min, fluid, max) — max = 1rem × 5.5 = 88px */
+  /* golden ratio scale: clamp(0.618rem, fluid, φ⁴ × 1rem) → ≈ clamp(3.2rem, 5.5vw, 5.5rem) */
   font-size: clamp(3.2rem, 5.5vw, 5.5rem);
   color: var(--white);
-  /* margin-bottom: 1rem × φ ≈ 26px */
-  margin-bottom: 26px;
+  /* spacing by base × φ ≈ 16px × 1.618 ≈ 26px */
+  margin-bottom: 1.618rem;
   font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.02em; /* Tight tracking for premium heading feel */
+  line-height: 1.125;
+  letter-spacing: -0.02em;
 }
 
 .hero-title > span {
@@ -596,15 +596,13 @@ img {
 .hero-line-1 {
   display: block;
   overflow: hidden;
-  /* margin-bottom: base(16px) / φ ≈ 10px */
-  margin-bottom: 10px;
+  margin-bottom: 0.618rem; /* ≈ 10px — note: smaller child spacing */
 }
 
-/* Staggered letter-by-letter reveal styles */
 .hero-char {
   display: inline-block;
   opacity: 0;
-  transform: translateY(20px) rotate(4deg);
+  transform: translateY(0.25rem) rotate(4deg);
   filter: blur(2px);
   animation: charReveal 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
   animation-delay: calc(0.03s * var(--char-idx) + 0.3s);
@@ -627,7 +625,7 @@ img {
 @keyframes deliverWord {
   from {
     opacity: 0;
-    transform: scale(0.8) translateY(40px);
+    transform: scale(0.8) translateY(0.618rem);
     filter: blur(6px);
   }
   to {
@@ -638,24 +636,19 @@ img {
 }
 
 .hero-desc {
-  /* font-size: 1rem × φ/φ ≈ 1rem → use 1.1rem for readability */
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-light);
   font-weight: 300;
-  /* margin-bottom: 26px × φ ≈ 42px */
-  margin-bottom: 42px;
-  /* line-height: φ = 1.618 */
+  margin-bottom: 1.618rem;
   line-height: 1.618;
   animation: fadeInUp 1s ease 1.3s forwards;
   opacity: 0;
-  /* max-width: Golden Ratio (29rem ≈ 464px) */
-  max-width: 464px;
+  max-width: 29rem; /* ≈ 464px — golden rectangle */
 }
 
 .hero-actions {
   display: flex;
-  /* gap: 1rem × φ/φ ≈ 1rem = 16px then ×φ ≈ 26px feels natural */
-  gap: 26px;
+  gap: 1.618rem;
   flex-wrap: wrap;
   animation: fadeInUp 1s ease 1.5s forwards;
   opacity: 0;
