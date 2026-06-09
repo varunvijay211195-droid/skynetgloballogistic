@@ -1576,12 +1576,12 @@ document.addEventListener('DOMContentLoaded', () => {
     titleLine.innerHTML = '';
     const words = text.split(' ');
     let charCount = 0;
-    
+
     words.forEach((word, wordIdx) => {
       const wordSpan = document.createElement('span');
       wordSpan.style.whiteSpace = 'nowrap';
       wordSpan.style.display = 'inline-block';
-      
+
       [...word].forEach((char) => {
         const span = document.createElement('span');
         span.className = 'hero-char';
@@ -1589,9 +1589,9 @@ document.addEventListener('DOMContentLoaded', () => {
         span.style.setProperty('--char-idx', charCount++);
         wordSpan.appendChild(span);
       });
-      
+
       titleLine.appendChild(wordSpan);
-      
+
       // Add space between words (but not after the last word)
       if (wordIdx < words.length - 1) {
         const spaceSpan = document.createElement('span');
@@ -1632,55 +1632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  // ==========================================
-  // Interactive 3D Globe Implementation
-  // ==========================================
-  const globeContainer = document.getElementById('globeViz');
-  if (globeContainer && typeof Globe !== 'undefined') {
-    // Generate random arcs for logistics routing (simulating flight paths)
-    const N = 25;
-    const arcsData = [...Array(N).keys()].map(() => ({
-      startLat: (Math.random() - 0.5) * 120, // Keep flights mostly away from extreme poles
-      startLng: (Math.random() - 0.5) * 360,
-      endLat: (Math.random() - 0.5) * 120,
-      endLng: (Math.random() - 0.5) * 360,
-      color: ['#1C64F2', '#10b981', '#7c3aed', '#ffd700'][Math.floor(Math.random() * 4)]
-    }));
 
-    const myGlobe = Globe()
-      (globeContainer)
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
-      .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-      .backgroundColor('rgba(0,0,0,0)') // Transparent background
-      .width(globeContainer.clientWidth || 500)
-      .height(globeContainer.clientHeight || 500)
-      .arcsData(arcsData)
-      .arcColor('color')
-      .arcDashLength(() => Math.random() * 0.5 + 0.1)
-      .arcDashGap(() => Math.random() * 0.5 + 0.1)
-      .arcDashAnimateTime(() => Math.random() * 4000 + 1500)
-      .arcStroke(0.6);
-
-    // Add glowing atmosphere — wider halo for dramatic presence
-    myGlobe.atmosphereColor('hsl(220, 95%, 65%)');
-    myGlobe.atmosphereAltitude(0.28); // φ/φ²-scaled: more glow volume
-
-    // Auto-rotate
-    myGlobe.controls().autoRotate = true;
-    myGlobe.controls().autoRotateSpeed = 0.8;
-    myGlobe.controls().enableZoom = false;
-
-    // Zoom in for a more dramatic globe presence (280 / φ ≈ 173; use 250 as sweet spot)
-    myGlobe.camera().position.z = 250;
-
-    // Handle Window Resize
-    window.addEventListener('resize', () => {
-      if(globeContainer.clientWidth) {
-        myGlobe.width(globeContainer.clientWidth);
-        myGlobe.height(globeContainer.clientHeight);
-      }
-    });
-  }
 
 });
 
